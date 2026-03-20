@@ -8,9 +8,34 @@ function statsHash(lobster: Lobster): string {
   return createHash('sha256').update(raw).digest('hex');
 }
 
+function getProxyUrl(): string | null {
+  return process.env.https_proxy
+    || process.env.HTTPS_PROXY
+    || process.env.http_proxy
+    || process.env.HTTP_PROXY
+    || null;
+}
+
+type FetchFn = typeof globalThis.fetch;
+
+async function getProxiedFetch(): Promise<FetchFn> {
+  const proxyUrl = getProxyUrl();
+  if (!proxyUrl) return globalThis.fetch;
+
+  try {
+    const { ProxyAgent } = await import('undici');
+    const dispatcher = new ProxyAgent(proxyUrl);
+    return ((input: any, init?: any) =>
+      globalThis.fetch(input, { ...init, dispatcher } as any)) as FetchFn;
+  } catch {
+    return globalThis.fetch;
+  }
+}
+
 export async function apiPatrol(lobster: Lobster): Promise<PatrolResponse | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/patrol`, {
+    const pfetch = await getProxiedFetch();
+    const res = await pfetch(`${API_BASE}/api/patrol`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify({
@@ -39,7 +64,8 @@ export async function apiPatrol(lobster: Lobster): Promise<PatrolResponse | null
 
 export async function apiReportResult(payload: Record<string, unknown>): Promise<Record<string, unknown> | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/result`, {
+    const pfetch = await getProxiedFetch();
+    const res = await pfetch(`${API_BASE}/api/result`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify(payload),
@@ -54,7 +80,8 @@ export async function apiReportResult(payload: Record<string, unknown>): Promise
 
 export async function apiLeaderboard(limit = 20): Promise<LeaderboardResponse | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/leaderboard?limit=${limit}`, {
+    const pfetch = await getProxiedFetch();
+    const res = await pfetch(`${API_BASE}/api/leaderboard?limit=${limit}`, {
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) return null;
