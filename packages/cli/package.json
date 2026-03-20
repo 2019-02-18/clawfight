@@ -1,0 +1,46 @@
+{
+  "name": "@2025-6-19/clawfight",
+  "version": "0.1.0",
+  "description": "ClawFight — raise and battle a unique lobster pet with evolving soul 🦞",
+  "author": "LIU",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clawfight/clawfight",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/clawfight/clawfight#readme",
+  "bugs": {
+    "url": "https://github.com/clawfight/clawfight/issues"
+  },
+  "bin": {
+    "clawfight": "./dist/index.js"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0",
+    "@types/node": "^22.0.0"
+  },
+  "keywords": [
+    "openclaw",
+    "clawfight",
+    "lobster",
+    "pet",
+    "battle",
+    "idle",
+    "virtual-pet",
+    "cli"
+  ]
+}

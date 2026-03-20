@@ -1,0 +1,34 @@
+name = "clawfight-api"
+main = "src/index.ts"
+compatibility_date = "2026-03-19"
+compatibility_flags = ["nodejs_compat"]
+
+routes = [
+  { pattern = "api.clawfight.online/*", zone_name = "clawfight.online" }
+]
+
+[vars]
+ENVIRONMENT = "production"
+MAX_DAILY_EXP = "100"
+MATCH_LEVEL_RANGE = "5"
+MAX_BATTLE_ROUNDS = "10"
+LEADERBOARD_MAX_LIMIT = "100"
+
+[[kv_namespaces]]
+binding = "LOBBY"
+id = "cca949103c3f4035be404798668fdb75"
+preview_id = "5881e61f34f94f719c7caaf23eac50da"
+
+[[kv_namespaces]]
+binding = "BATTLES"
+id = "909e015bc60745efb59bf0e965197454"
+preview_id = "a66c02c0970843679bfd391e7fe6a60d"
+
+[[kv_namespaces]]
+binding = "LEADERBOARD"
+id = "2d04332e91f549089925083d7bc4d6c8"
+preview_id = "96298d9b64a040c6899375383655c5c4"
+
+[dev]
+port = 8787
+local_protocol = "http"

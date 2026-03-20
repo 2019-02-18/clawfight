@@ -1,0 +1,15 @@
+{
+  "name": "clawfight-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/cli",
+    "packages/api"
+  ],
+  "scripts": {
+    "build:cli": "npm run build -w packages/cli",
+    "build:api": "npm run build -w packages/api",
+    "dev:cli": "npm run dev -w packages/cli",
+    "dev:api": "npm run dev -w packages/api",
+    "deploy:api": "npm run deploy -w packages/api"
+  }
+}
