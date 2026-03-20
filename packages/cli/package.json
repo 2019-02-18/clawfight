@@ -6,12 +6,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/clawfight/clawfight",
+    "url": "https://github.com/2019-02-18/clawfight",
     "directory": "packages/cli"
   },
-  "homepage": "https://github.com/clawfight/clawfight#readme",
+  "homepage": "https://github.com/2019-02-18/clawfight#readme",
   "bugs": {
-    "url": "https://github.com/clawfight/clawfight/issues"
+    "url": "https://github.com/2019-02-18/clawfight/issues"
   },
   "bin": {
     "clawfight": "./dist/index.js"
