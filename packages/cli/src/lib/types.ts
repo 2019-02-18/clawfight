@@ -96,6 +96,14 @@ export interface PatrolResponse {
   };
   battle_seed?: string;
   encounter_type?: string;
+  battle_result?: {
+    result: 'win' | 'loss' | 'draw';
+    winner_id: string;
+    rounds: number;
+    rounds_log: BattleRound[];
+    exp_gain: number;
+  };
+  cooldown_remaining?: number;
 }
 
 export interface LeaderboardEntry {

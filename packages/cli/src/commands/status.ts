@@ -1,5 +1,6 @@
 import { readLobster, readSoul } from '../lib/memory.js';
 import { RARITY_LABELS } from '../lib/types.js';
+import { t } from '../lib/i18n.js';
 
 function bar(current: number, max: number, width = 20): string {
   const filled = Math.round((current / Math.max(max, 1)) * width);
@@ -9,7 +10,7 @@ function bar(current: number, max: number, width = 20): string {
 export async function status(): Promise<void> {
   const lobster = await readLobster();
   if (!lobster) {
-    console.log('\n🥚 还没有龙虾。运行 npx clawfight hatch 来孵化一只！');
+    console.log('\n' + t('no_lobster'));
     return;
   }
 
@@ -44,11 +45,13 @@ export async function status(): Promise<void> {
   console.log(`│    勇气 ${lobster.soul.bravery}/10 | 好奇 ${lobster.soul.curiosity}/10 | 话量 ${lobster.soul.talkativeness}/10 | 脾气 ${lobster.soul.temper}/10  │`);
   console.log('└' + '─'.repeat(44) + '┘');
 
+  console.log('\n' + t('status_battle_code', { code: lobster.id.slice(0, 8) }));
+
   const soulText = await readSoul();
   if (soulText) {
     const firstLine = soulText.split('\n').find(l => l.trim() && !l.startsWith('#'));
     if (firstLine) {
-      console.log(`\n📜 灵魂: ${firstLine.trim().slice(0, 60)}`);
+      console.log(`📜 灵魂: ${firstLine.trim().slice(0, 60)}`);
     }
   }
 }

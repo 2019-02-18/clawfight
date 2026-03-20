@@ -1,4 +1,5 @@
 import { apiLeaderboard } from '../lib/api.js';
+import { t } from '../lib/i18n.js';
 
 const RARITY_SYMBOLS: Record<string, string> = {
   common: '  ',
@@ -10,34 +11,36 @@ const RARITY_SYMBOLS: Record<string, string> = {
 };
 
 export async function leaderboard(): Promise<void> {
-  console.log('\n📡 获取全球排行榜...');
+  console.log('\n' + t('lb_loading'));
 
   const data = await apiLeaderboard(20);
   if (!data) {
-    console.log('⚠️  服务器不可达，无法获取排行榜。');
+    console.log(t('lb_offline'));
     return;
   }
 
   if (data.leaderboard.length === 0) {
-    console.log('\n🦞 还没有龙虾上榜。成为第一个吧！');
+    console.log('\n' + t('lb_empty'));
     return;
   }
 
-  console.log('\n' + '═'.repeat(60));
-  console.log('  🦞 ClawFight 全球排行榜');
-  console.log('═'.repeat(60));
-  console.log(`  ${'排名'.padEnd(6)} ${'名称'.padEnd(16)} ${'等级'.padEnd(8)} ${'胜场'.padEnd(8)} ${'胜率'.padEnd(8)}`);
-  console.log('─'.repeat(60));
+  console.log('\n' + '═'.repeat(70));
+  console.log(t('lb_title'));
+  console.log('═'.repeat(70));
+  console.log(t('lb_header'));
+  console.log('─'.repeat(70));
 
   for (const entry of data.leaderboard) {
     const sym = RARITY_SYMBOLS[entry.rarity] || '  ';
     const name = entry.name.length > 12 ? entry.name.slice(0, 11) + '…' : entry.name;
+    const code = entry.id.slice(0, 8);
     console.log(
-      `  ${sym} #${String(entry.rank).padEnd(4)} ${name.padEnd(14)} Lv.${String(entry.level).padEnd(5)} ${String(entry.wins).padEnd(7)} ${entry.win_rate}%`
+      `  ${sym} #${String(entry.rank).padEnd(4)} ${name.padEnd(14)} Lv.${String(entry.level).padEnd(5)} ${String(entry.wins).padEnd(7)} ${String(entry.win_rate).padEnd(3)}%    ${code}`
     );
   }
 
-  console.log('─'.repeat(60));
-  console.log(`  总龙虾: ${data.total_lobsters} | 活跃: ${data.active_lobsters}`);
-  console.log('═'.repeat(60));
+  console.log('─'.repeat(70));
+  console.log(t('lb_total', { total: data.total_lobsters, active: data.active_lobsters }));
+  console.log(t('lb_hint'));
+  console.log('═'.repeat(70));
 }

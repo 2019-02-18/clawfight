@@ -13,7 +13,7 @@ const program = new Command();
 program
   .name('clawfight')
   .description('🦞 ClawFight — 龙虾电子宠物对战')
-  .version('1.2.0');
+  .version('1.3.0');
 
 program
   .command('hatch')
@@ -39,9 +39,10 @@ program
 
 program
   .command('battle')
-  .description('进行一场战斗')
-  .action(async () => {
-    await battle();
+  .description('通过战斗码挑战指定对手')
+  .argument('[code]', '对手的战斗码（排行榜中可见）')
+  .action(async (code?: string) => {
+    await battle(code);
   });
 
 program

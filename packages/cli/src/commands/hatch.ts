@@ -3,6 +3,7 @@ import { readLobster, writeLobster, writeSoul, appendLog } from '../lib/memory.j
 import { generateSoul, buildSoulMarkdown } from '../lib/soul.js';
 import { calcExpToNext, RARITY_WEIGHTS, RARITY_LABELS } from '../lib/types.js';
 import type { Lobster, Rarity, LobsterStats } from '../lib/types.js';
+import { t } from '../lib/i18n.js';
 
 function rollRarity(): Rarity {
   const roll = Math.random() * 100;
@@ -38,8 +39,8 @@ function randomName(): string {
 export async function hatch(name?: string): Promise<void> {
   const existing = await readLobster();
   if (existing) {
-    console.log(`\n🦞 你已经有一只龙虾了：${existing.name}（Lv.${existing.level}）`);
-    console.log('一人一虾，不可替代。');
+    console.log('\n' + t('hatch_exists', { name: existing.name, level: existing.level }));
+    console.log(t('hatch_one_only'));
     return;
   }
 
@@ -78,26 +79,23 @@ export async function hatch(name?: string): Promise<void> {
   const soulMd = buildSoulMarkdown(lobsterName, soul, rarity, 'coastal');
   await writeSoul(soulMd);
 
-  await appendLog(`🥚 **${lobsterName}** 破壳而出！稀有度：${RARITY_LABELS[rarity]}，环境：沿海浅滩`);
+  await appendLog(`🥚 **${lobsterName}** hatched! Rarity: ${RARITY_LABELS[rarity]}`);
 
   console.log('\n' + '='.repeat(50));
-  console.log('  🥚 → 🦞  孵 化 成 功 ！');
+  console.log(t('hatch_success'));
   console.log('='.repeat(50));
   console.log();
-  console.log(`  名称: ${lobsterName}`);
-  console.log(`  稀有度: ${RARITY_LABELS[rarity]} (${rarity})`);
-  console.log(`  等级: Lv.1`);
-  console.log(`  环境: 沿海浅滩`);
+  console.log(`  ${lobsterName}`);
+  console.log(`  ${RARITY_LABELS[rarity]} (${rarity})`);
+  console.log('  Lv.1');
+  console.log(t('hatch_env'));
   console.log();
   console.log(`  ❤️  HP: ${stats.hp}    ⚔️  ATK: ${stats.attack}    🛡️  DEF: ${stats.defense}`);
   console.log(`  💨 SPD: ${stats.speed}    👁️  INT: ${stats.intimidation}    🍀 LCK: ${stats.luck}`);
   console.log();
-  console.log(`  性格:`);
-  console.log(`    勇气 ${soul.bravery}/10 | 好奇 ${soul.curiosity}/10 | 话量 ${soul.talkativeness}/10 | 脾气 ${soul.temper}/10`);
-  console.log();
   console.log(`  ID: ${lobster.id}`);
   console.log('='.repeat(50));
   console.log();
-  console.log('你的龙虾已经准备好探索海洋了！');
-  console.log('运行 npx clawfight patrol 开始第一次巡逻。');
+  console.log(t('hatch_ready'));
+  console.log(t('hatch_next'));
 }

@@ -52,14 +52,11 @@ export async function apiPatrol(lobster: Lobster): Promise<PatrolResponse | null
         lobster_id: lobster.id,
         level: lobster.level,
         stats_hash: statsHash(lobster),
+        stats: lobster.stats,
         environment: lobster.environment,
         name: lobster.name,
         color: lobster.rarity,
         rarity: lobster.rarity,
-        wins: lobster.wins,
-        losses: lobster.losses,
-        streak: lobster.streak,
-        reputation: lobster.reputation,
         is_molting: lobster.status === 'molting',
         timestamp: new Date().toISOString(),
       }),
@@ -82,6 +79,28 @@ export async function apiReportResult(payload: Record<string, unknown>): Promise
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) return null;
+    return (await res.json()) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+export async function apiBattle(challengerId: string, opponentCode: string): Promise<Record<string, unknown> | null> {
+  try {
+    const pfetch = await getProxiedFetch();
+    const res = await pfetch(`${API_BASE}/api/battle`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({
+        challenger_id: challengerId,
+        opponent_code: opponentCode,
+      }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) {
+      const err = (await res.json()) as Record<string, unknown>;
+      return { error: err.error || 'Unknown error' };
+    }
     return (await res.json()) as Record<string, unknown>;
   } catch {
     return null;

@@ -1,15 +1,23 @@
+interface LobsterStats {
+  hp: number;
+  attack: number;
+  defense: number;
+  speed: number;
+  intimidation: number;
+  luck: number;
+  crusher_claw?: number;
+  pincer_claw?: number;
+}
+
 interface LobsterEntry {
   id: string;
   name: string;
   level: number;
   stats_hash: string;
+  stats?: LobsterStats;
   environment: string;
   color: string;
   rarity: string;
-  wins: number;
-  losses: number;
-  streak: number;
-  reputation: number;
   is_molting: boolean;
   timestamp: string;
   patrol_time: number;
@@ -69,4 +77,4 @@ export async function estimatePoolSize(
   return count;
 }
 
-export type { LobsterEntry };
+export type { LobsterEntry, LobsterStats };

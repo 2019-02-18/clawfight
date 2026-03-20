@@ -1,14 +1,15 @@
 import { readLobster, writeLobster, appendLog } from '../lib/memory.js';
+import { t } from '../lib/i18n.js';
 
 export async function wake(): Promise<void> {
   const lobster = await readLobster();
   if (!lobster) {
-    console.log('\n🥚 还没有龙虾。运行 npx clawfight hatch 来孵化一只！');
+    console.log('\n' + t('no_lobster'));
     return;
   }
 
   if (lobster.status !== 'hibernating') {
-    console.log(`\n🟢 ${lobster.name} 没有在休眠。它已经是活跃状态了！`);
+    console.log('\n' + t('wake_not_sleeping', { name: lobster.name }));
     return;
   }
 
@@ -42,20 +43,20 @@ export async function wake(): Promise<void> {
 
   await writeLobster(lobster);
 
-  const hoursStr = hoursSlept < 1
-    ? `${Math.round(hoursSlept * 60)} 分钟`
-    : `${Math.round(hoursSlept)} 小时`;
+  const duration = hoursSlept < 1
+    ? t('duration_minutes', { n: Math.round(hoursSlept * 60) })
+    : t('duration_hours', { n: Math.round(hoursSlept) });
 
   const bonusStr = bonuses.length > 0
     ? bonuses.join(', ')
-    : '（休眠不足 4 小时，无加成）';
+    : t('wake_no_bonus');
 
-  await appendLog(`☀️ ${lobster.name} 苏醒 (休眠 ${hoursStr}) → ${bonusStr}`);
+  await appendLog(`☀️ ${lobster.name} woke (${duration}) → ${bonusStr}`);
 
   console.log('\n' + '─'.repeat(40));
-  console.log(`☀️ ${lobster.name} 从沙地中缓缓苏醒...`);
-  console.log(`   休眠时长: ${hoursStr}`);
-  console.log(`   恢复加成: ${bonusStr}`);
+  console.log(t('wake_desc', { name: lobster.name }));
+  console.log(t('wake_duration', { duration }));
+  console.log(t('wake_bonus', { bonus: bonusStr }));
   console.log('─'.repeat(40));
-  console.log(`\n🟢 ${lobster.name} 精神焕发，准备好再次出击！`);
+  console.log('\n' + t('wake_ready', { name: lobster.name }));
 }

@@ -1,19 +1,20 @@
 import { readLobster, writeLobster, appendLog } from '../lib/memory.js';
+import { t } from '../lib/i18n.js';
 
 export async function rest(): Promise<void> {
   const lobster = await readLobster();
   if (!lobster) {
-    console.log('\n🥚 还没有龙虾。运行 npx clawfight hatch 来孵化一只！');
+    console.log('\n' + t('no_lobster'));
     return;
   }
 
   if (lobster.status === 'hibernating') {
-    console.log(`\n💤 ${lobster.name} 已经在休眠中了。运行 npx clawfight wake 来唤醒它。`);
+    console.log('\n' + t('rest_already', { name: lobster.name }));
     return;
   }
 
   if (lobster.status === 'molting') {
-    console.log(`\n🟡 ${lobster.name} 正在蜕壳，不能休眠。等蜕壳结束再来。`);
+    console.log('\n' + t('rest_molting', { name: lobster.name }));
     return;
   }
 
@@ -21,13 +22,13 @@ export async function rest(): Promise<void> {
   lobster.hibernated_at = new Date().toISOString();
 
   await writeLobster(lobster);
-  await appendLog(`💤 ${lobster.name} 进入休眠`);
+  await appendLog(`💤 ${lobster.name} → hibernation`);
 
   console.log('\n' + '─'.repeat(40));
-  console.log(`💤 ${lobster.name} 缓缓沉入海底沙地...`);
-  console.log('   龙虾蜷缩起触须，安静地休息。');
-  console.log('   休眠期间不会参与巡逻和战斗。');
-  console.log('   醒来后会获得恢复加成！');
+  console.log(t('rest_desc1', { name: lobster.name }));
+  console.log(t('rest_desc2'));
+  console.log(t('rest_desc3'));
+  console.log(t('rest_desc4'));
   console.log('─'.repeat(40));
-  console.log('\n运行 npx clawfight wake 来唤醒它。');
+  console.log('\n' + t('rest_wake_hint'));
 }

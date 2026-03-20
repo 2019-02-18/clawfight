@@ -1,6 +1,7 @@
 import { handlePatrol } from './routes/patrol.js';
 import { handleEncounter, handleResult } from './routes/encounter.js';
 import { handleLeaderboard } from './routes/leaderboard.js';
+import { handleBattle } from './routes/battle.js';
 
 interface Env {
   LOBBY: KVNamespace;
@@ -50,6 +51,9 @@ export default {
       }
       if (pathname === '/api/result' && request.method === 'POST') {
         return await handleResult(request, env);
+      }
+      if (pathname === '/api/battle' && request.method === 'POST') {
+        return await handleBattle(request, env);
       }
       if (pathname === '/api/leaderboard' && request.method === 'GET') {
         return await handleLeaderboard(request, env);

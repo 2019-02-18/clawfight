@@ -26,12 +26,23 @@ export async function handleLeaderboard(request: Request, env: Env): Promise<Res
     entries.push(JSON.parse(data));
   }
 
+  const defaultSort = (a: any, b: any) => {
+    const wA = a.wins || 0, wB = b.wins || 0;
+    if (wB !== wA) return wB - wA;
+    const tA = wA + (a.losses || 0), tB = wB + (b.losses || 0);
+    const rA = tA > 0 ? wA / tA : 0, rB = tB > 0 ? wB / tB : 0;
+    if (rB !== rA) return rB - rA;
+    return (b.level || 1) - (a.level || 1);
+  };
+
   const sortFns: Record<string, (a: any, b: any) => number> = {
-    wins: (a, b) => (b.wins || 0) !== (a.wins || 0) ? (b.wins || 0) - (a.wins || 0) : (a.losses || 0) - (b.losses || 0),
-    level: (a, b) => (b.level || 1) - (a.level || 1),
+    wins: defaultSort,
+    level: (a, b) => (b.level || 1) !== (a.level || 1) ? (b.level || 1) - (a.level || 1) : defaultSort(a, b),
     winrate: (a, b) => {
       const tA = (a.wins || 0) + (a.losses || 0), tB = (b.wins || 0) + (b.losses || 0);
-      return (tB > 0 ? b.wins / tB : 0) - (tA > 0 ? a.wins / tA : 0);
+      const rA = tA > 0 ? (a.wins || 0) / tA : 0, rB = tB > 0 ? (b.wins || 0) / tB : 0;
+      if (rB !== rA) return rB - rA;
+      return defaultSort(a, b);
     },
   };
   entries.sort(sortFns[sortBy] || sortFns.wins);
