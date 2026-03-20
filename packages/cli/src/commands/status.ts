@@ -43,4 +43,12 @@ export async function status(): Promise<void> {
   console.log(`│  性格:                                     │`);
   console.log(`│    勇气 ${lobster.soul.bravery}/10 | 好奇 ${lobster.soul.curiosity}/10 | 话量 ${lobster.soul.talkativeness}/10 | 脾气 ${lobster.soul.temper}/10  │`);
   console.log('└' + '─'.repeat(44) + '┘');
+
+  const soulText = await readSoul();
+  if (soulText) {
+    const firstLine = soulText.split('\n').find(l => l.trim() && !l.startsWith('#'));
+    if (firstLine) {
+      console.log(`\n📜 灵魂: ${firstLine.trim().slice(0, 60)}`);
+    }
+  }
 }

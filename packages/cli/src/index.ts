@@ -5,13 +5,15 @@ import { patrol } from './commands/patrol.js';
 import { battle } from './commands/battle.js';
 import { feed } from './commands/feed.js';
 import { leaderboard } from './commands/leaderboard.js';
+import { rest } from './commands/rest.js';
+import { wake } from './commands/wake.js';
 
 const program = new Command();
 
 program
   .name('clawfight')
   .description('🦞 ClawFight — 龙虾电子宠物对战')
-  .version('1.1.0');
+  .version('1.2.0');
 
 program
   .command('hatch')
@@ -56,6 +58,20 @@ program
   .description('查看全球排行榜')
   .action(async () => {
     await leaderboard();
+  });
+
+program
+  .command('rest')
+  .description('进入休眠（暂停巡逻和战斗）')
+  .action(async () => {
+    await rest();
+  });
+
+program
+  .command('wake')
+  .description('从休眠中唤醒（附带恢复加成）')
+  .action(async () => {
+    await wake();
   });
 
 program.parse();

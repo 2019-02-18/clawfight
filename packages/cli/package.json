@@ -1,6 +1,6 @@
 {
   "name": "@2025-6-19/clawfight",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "ClawFight — raise and battle a unique lobster pet with evolving soul 🦞",
   "author": "LIU",
   "license": "MIT",
@@ -26,12 +26,13 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "commander": "^14.0.0"
+    "commander": "^14.0.0",
+    "undici": "^7.0.0"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
     "tsup": "^8.0.0",
-    "typescript": "^5.5.0",
-    "@types/node": "^22.0.0"
+    "typescript": "^5.5.0"
   },
   "keywords": [
     "openclaw",

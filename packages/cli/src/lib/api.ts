@@ -16,19 +16,29 @@ function getProxyUrl(): string | null {
     || null;
 }
 
-type FetchFn = typeof globalThis.fetch;
+type SimpleFetch = (url: string, init?: RequestInit) => Promise<Response>;
 
-async function getProxiedFetch(): Promise<FetchFn> {
+let _cachedFetch: SimpleFetch | null = null;
+
+async function getProxiedFetch(): Promise<SimpleFetch> {
+  if (_cachedFetch) return _cachedFetch;
+
   const proxyUrl = getProxyUrl();
-  if (!proxyUrl) return globalThis.fetch;
+  if (!proxyUrl) {
+    _cachedFetch = globalThis.fetch;
+    return _cachedFetch;
+  }
 
   try {
-    const { ProxyAgent } = await import('undici');
-    const dispatcher = new ProxyAgent(proxyUrl);
-    return ((input: any, init?: any) =>
-      globalThis.fetch(input, { ...init, dispatcher } as any)) as FetchFn;
+    const undici = await import('undici');
+    const agent = new undici.ProxyAgent(proxyUrl);
+    const undiciFetch = undici.fetch;
+    _cachedFetch = ((url: string, init?: any) =>
+      undiciFetch(url, { ...init, dispatcher: agent })) as unknown as SimpleFetch;
+    return _cachedFetch;
   } catch {
-    return globalThis.fetch;
+    _cachedFetch = globalThis.fetch;
+    return _cachedFetch;
   }
 }
 

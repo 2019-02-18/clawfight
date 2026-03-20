@@ -40,6 +40,7 @@ export interface Lobster {
   last_battle: string;
   today_exp: number;
   daily_exp_cap: number;
+  hibernated_at?: string;
 }
 
 export interface RandomEvent {
