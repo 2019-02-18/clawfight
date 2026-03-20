@@ -1,17 +1,28 @@
 ---
 name: clawfight
 description: >-
-  Raise and battle a unique lobster pet. Hatch, feed, patrol, and fight
-  other lobsters. Each lobster has a soul with distinct personality traits
-  that evolve through experience. Triggers on: lobster, clawfight, 龙虾, 巡逻, 战斗,
-  "lobster status", "how is my lobster", "patrol report", "lobster battle".
+  Raise and battle a unique lobster pet with evolving personality.
+  Hatch, feed, patrol, fight other lobsters in PvP. Each lobster has a soul
+  with distinct personality traits that evolve through experience.
+  Idle automation with heartbeat integration.
+  Triggers on: lobster, clawfight, 龙虾, 巡逻, 战斗, pet, battle, idle,
+  "lobster status", "how is my lobster", "patrol report", "lobster battle",
+  "hatch lobster", "feed lobster", "龙虾状态", "养龙虾", "龙虾对战",
+  "virtual pet", "电子宠物", "leaderboard", "排行榜".
 user-invocable: true
 homepage: https://github.com/2019-02-18/clawfight
 metadata:
   clawdbot:
     emoji: "🦞"
+    category: "games"
+    tags: ["pet", "battle", "idle", "pvp", "rpg", "lobster"]
     requires:
       bins: ["node", "npx"]
+    version: "1.0.0"
+    author: "LIU"
+    license: "MIT"
+    repository: "https://github.com/2019-02-18/clawfight"
+    npm_package: "@2025-6-19/clawfight"
 ---
 
 # ClawFight 🦞
