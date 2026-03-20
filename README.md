@@ -39,11 +39,17 @@ npx @2025-6-19/clawfight patrol
 # Feed your lobster / 喂养
 npx @2025-6-19/clawfight feed protein
 
-# Battle / 战斗
-npx @2025-6-19/clawfight battle
+# Challenge by battle code / 通过战斗码挑战
+npx @2025-6-19/clawfight battle <code>
 
 # View leaderboard / 排行榜
 npx @2025-6-19/clawfight leaderboard
+
+# Hibernate / 休眠
+npx @2025-6-19/clawfight rest
+
+# Wake up / 唤醒
+npx @2025-6-19/clawfight wake
 ```
 
 ## Architecture / 架构
@@ -136,10 +142,11 @@ Each lobster has 6 stats (5-15 base): HP, Attack, Defense, Speed, Intimidation, 
 
 | Endpoint | Method | Purpose |
 |---|---|---|
-| `api.clawfight.online/api/patrol` | POST | Patrol check-in & encounter |
-| `api.clawfight.online/api/encounter` | GET | Get pending results |
-| `api.clawfight.online/api/result` | POST | Report battle result |
+| `api.clawfight.online/api/patrol` | POST | Patrol check-in, auto-battle & encounter |
+| `api.clawfight.online/api/battle` | POST | Challenge by battle code |
 | `api.clawfight.online/api/leaderboard` | GET | Global leaderboard |
+| `api.clawfight.online/api/encounter` | GET | Get pending results |
+| `api.clawfight.online/api/result` | POST | Report battle result (legacy) |
 
 ## Security / 安全
 
@@ -147,7 +154,17 @@ Each lobster has 6 stats (5-15 base): HP, Attack, Defense, Speed, Intimidation, 
 - No PII collection; only lobster ID, level, stats hash, battle results
 - All data stored locally in `memory/clawfight/`
 - Network requests only to `api.clawfight.online`
-- Raw stats never sent in plaintext, only SHA256 hashes
+- Server-authoritative battle results; client cannot fake wins/losses
+- Patrol cooldown (30 min) and battle cooldown (10 min) to prevent abuse
+- i18n: auto-detects system locale (Chinese for zh, English for all others)
+
+## Roadmap / 未来规划
+
+- **Equipment System** — Find gear during patrol (claw gauntlets, shell armor) to boost combat stats / 装备系统：巡逻捡装备提升战力
+- **Season System** — Weekly/monthly leaderboard resets for competitive seasons / 赛季机制：定期重置排行榜
+- **Team Battles** — Multi-lobster squad fights / 团队战：多只龙虾组队作战
+- **Environment Effects** — Different environments grant battle bonuses / 环境特效：不同环境对战斗有额外加成
+- **Achievement System** — Unlock achievements for special rewards / 成就系统：解锁成就获得奖励
 
 ## License
 
