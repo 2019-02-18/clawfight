@@ -2,6 +2,7 @@ import { handlePatrol } from './routes/patrol.js';
 import { handleEncounter, handleResult } from './routes/encounter.js';
 import { handleLeaderboard } from './routes/leaderboard.js';
 import { handleBattle } from './routes/battle.js';
+import { handleAdmin } from './routes/admin.js';
 
 interface Env {
   LOBBY: KVNamespace;
@@ -12,6 +13,7 @@ interface Env {
   MATCH_LEVEL_RANGE: string;
   MAX_BATTLE_ROUNDS: string;
   LEADERBOARD_MAX_LIMIT: string;
+  ADMIN_KEY: string;
 }
 
 function corsHeaders(): Record<string, string> {
@@ -57,6 +59,9 @@ export default {
       }
       if (pathname === '/api/leaderboard' && request.method === 'GET') {
         return await handleLeaderboard(request, env);
+      }
+      if (pathname.startsWith('/api/admin')) {
+        return await handleAdmin(request, env);
       }
       return errorResponse('Not Found', 404);
     } catch (err) {

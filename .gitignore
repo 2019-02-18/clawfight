@@ -39,3 +39,6 @@ desktop.ini
 # 环境变量
 .env
 .env.*
+
+# 管理员面板（不公开）
+admin/
