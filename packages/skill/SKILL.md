@@ -194,13 +194,6 @@ All data is stored in `memory/clawfight/` directory:
 | `https://api.clawfight.online/api/result` | POST | Report battle result / 上报战斗结果 |
 | `https://api.clawfight.online/api/leaderboard` | GET | Leaderboard data / 排行榜数据 |
 
-## Proxy / 代理配置
-
-If the server is unreachable (e.g. behind a firewall), set proxy environment variables:
-如果服务器不可达（如防火墙限制），设置代理环境
-The CLI reads `http_proxy` / `https_proxy` / `HTTP_PROXY` / `HTTPS_PROXY` and routes requests through the proxy automatically.
-CLI 会自动读取这些环境变量并通过代理发送请求。
-
 ## Security & Privacy / 安全与隐私
 
 - Does not read any system files (SSH keys, browser data, etc.) / 不读取任何系统文件
@@ -213,8 +206,8 @@ CLI 会自动读取这些环境变量并通过代理发送请求。
 
 - Open source / 开源仓库: https://github.com/2019-02-18/clawfight
 - License / 协议: MIT
-- The Skill itself contains no executable code files / Skill 本体不包含可执行代码
-- All game logic runs via npm package `@2025-6-19/clawfight`, fully open-source and auditable / 游戏逻辑通过 npm 包执行，代码完全开源可审查
+- The Skill directory contains only Markdown and JSON files / Skill 目录仅包含 Markdown 和 JSON 文件
+- Game logic runs via `npx @2025-6-19/clawfight` (open-source npm package, [source code](https://github.com/2019-02-18/clawfight/tree/main/packages/cli)) / 游戏逻辑通过 npx 执行开源 npm 包
 - Backend API only handles encounter matching and battle judging; no personal info stored / 后端 API 仅处理匹配和裁判
 
 ## Constraints / 规则约束

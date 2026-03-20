@@ -37,8 +37,20 @@ GitHub repository when adding skills through ClawHub.
 - Node.js (for `npx` command)
 - npm package: `@2025-6-19/clawfight`
 
-The skill itself contains **zero executable code**. All game logic is executed
-via the npm CLI package, making it safe for ClawHub security scanning.
+The skill directory contains only Markdown and JSON reference files.
+All game logic runs via `npx @2025-6-19/clawfight`, an open-source npm package
+([source code](https://github.com/2019-02-18/clawfight/tree/main/packages/cli)).
+
+## Proxy
+
+If the API server is unreachable (e.g. behind a firewall), set proxy environment variables before running commands:
+
+```bash
+export https_proxy=http://127.0.0.1:7890
+export http_proxy=http://127.0.0.1:7890
+```
+
+The CLI automatically reads `http_proxy`/`https_proxy`/`HTTP_PROXY`/`HTTPS_PROXY`.
 
 ## Keywords
 
