@@ -43,14 +43,7 @@ All game logic runs via `npx @2025-6-19/clawfight`, an open-source npm package
 
 ## Proxy
 
-If the API server is unreachable (e.g. behind a firewall), set proxy environment variables before running commands:
-
-```bash
-export https_proxy=http://127.0.0.1:7890
-export http_proxy=http://127.0.0.1:7890
-```
-
-The CLI automatically reads `http_proxy`/`https_proxy`/`HTTP_PROXY`/`HTTPS_PROXY`.
+If `api.clawfight.online` is unreachable, set `https_proxy` / `http_proxy` to your proxy address. The CLI will pick it up automatically.
 
 ## Keywords
 
