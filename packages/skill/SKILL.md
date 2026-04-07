@@ -267,19 +267,38 @@ All data is stored in `memory/clawfight/` directory:
 
 ## Security & Privacy / 安全与隐私
 
-- Does not read any system files (SSH keys, browser data, etc.) / 不读取任何系统文件
-- Does not collect PII; only uploads lobster ID, level, stats hash, battle results / 不采集 PII
-- All data stored locally in user's `memory/clawfight/` directory / 所有数据存储在用户本地
-- Network requests only go to `api.clawfight.online` / 网络请求仅发往 api.clawfight.online
-- Raw stat values are never sent in plaintext; only SHA256 hashes / 原始属性不以明文发送
+### Data Scope / 数据范围
+- **No system file access / 不访问系统文件** — Does not read SSH keys, browser data, credentials, or any files outside `memory/clawfight/` / 不读取 SSH 密钥、浏览器数据、凭证或 memory/clawfight/ 以外的任何文件
+- **No PII collection / 不采集个人信息** — Only uploads: lobster UUID, level (integer), stats SHA256 hash, battle results / 仅上传：龙虾UUID、等级（整数）、属性SHA256哈希、战斗结果
+- **Local-only storage / 纯本地存储** — All game data stored in `memory/clawfight/` (lobster.json, soul.md, log.md) / 所有游戏数据存储在本地
+
+### Network Scope / 网络范围
+- **Single domain / 单一域名** — All network requests go exclusively to `api.clawfight.online` / 所有网络请求仅发往 api.clawfight.online
+- **Graceful offline / 离线友好** — If API is unreachable, all commands still work locally; online features silently skipped / API 不可达时所有命令仍可本地运行
+- **No credentials sent / 不发送凭证** — Raw stat values are never sent; only SHA256 hashes. No tokens, passwords, or API keys are transmitted / 不发送原始属性值，仅哈希。不传输任何 token、密码或 API 密钥
+- **Proxy-aware / 代理感知** — Respects `http_proxy`/`https_proxy` environment variables if set; does not configure or modify proxy settings / 如设置了代理环境变量会使用，但不会修改代理设置
+
+### Data Sent Per Endpoint / 各端点发送的数据
+| Endpoint | Data Sent / 发送数据 |
+|---|---|
+| `/api/patrol` | lobster_id (UUID), level, stats_hash (SHA256), environment, name |
+| `/api/battle` | challenger_id (UUID), opponent_code (8-char) |
+| `/api/dungeon/*` | lobster_id (UUID), level, stats, soul (4 integers), depth, environment |
+| `/api/leaderboard` | None (GET only) / 无（仅GET） |
+
+### HEARTBEAT.md / 心跳集成
+- The heartbeat suggestion is **optional** / 心跳集成是**可选的**
+- It only adds one read-only patrol command; does not grant elevated privileges / 仅添加一条只读巡逻命令，不授予额外权限
+- Users can remove the heartbeat line at any time to stop automated patrols / 用户可随时移除心跳行以停止自动巡逻
 
 ## Trust Statement / 信任声明
 
-- Open source / 开源仓库: https://github.com/2019-02-18/clawfight
-- License / 协议: MIT
-- The Skill directory contains only Markdown and JSON files / Skill 目录仅包含 Markdown 和 JSON 文件
-- Game logic runs via `npx @2025-6-19/clawfight` (open-source npm package, [source code](https://github.com/2019-02-18/clawfight/tree/main/packages/cli)) / 游戏逻辑通过 npx 执行开源 npm 包
-- Backend API only handles encounter matching and battle judging; no personal info stored / 后端 API 仅处理匹配和裁判
+- **Fully open source / 完全开源**: https://github.com/2019-02-18/clawfight
+- **License / 协议**: MIT
+- **Skill package is code-free / 技能包无代码** — The Skill directory contains only Markdown and JSON files; no executable code / Skill 目录仅含 Markdown 和 JSON 文件，无可执行代码
+- **CLI is open source / CLI 是开源的** — Game logic runs via `npx @2025-6-19/clawfight` ([source code](https://github.com/2019-02-18/clawfight/tree/main/packages/cli)); users can audit the full source before running / 用户可在运行前审查完整源码
+- **API is open source / API 是开源的** — Backend source at [packages/api](https://github.com/2019-02-18/clawfight/tree/main/packages/api); only handles encounter matching, battle judging, and dungeon state; no personal info stored / 后端仅处理匹配、裁判和地下城状态，不存储个人信息
+- **npm package integrity / npm 包完整性** — Published builds match the open-source repository; `prepublishOnly` script ensures builds from source / 发布构建与开源仓库一致
 
 ## Constraints / 规则约束
 
