@@ -3,11 +3,13 @@ import { handleEncounter, handleResult } from './routes/encounter.js';
 import { handleLeaderboard } from './routes/leaderboard.js';
 import { handleBattle } from './routes/battle.js';
 import { handleAdmin } from './routes/admin.js';
+import { handleDungeonEnter, handleDungeonAct, handleDungeonState, handleDungeonAbandon } from './routes/dungeon.js';
 
 interface Env {
   LOBBY: KVNamespace;
   BATTLES: KVNamespace;
   LEADERBOARD: KVNamespace;
+  DUNGEONS: KVNamespace;
   ENVIRONMENT: string;
   MAX_DAILY_EXP: string;
   MATCH_LEVEL_RANGE: string;
@@ -59,6 +61,18 @@ export default {
       }
       if (pathname === '/api/leaderboard' && request.method === 'GET') {
         return await handleLeaderboard(request, env);
+      }
+      if (pathname === '/api/dungeon/enter' && request.method === 'POST') {
+        return await handleDungeonEnter(request, env);
+      }
+      if (pathname === '/api/dungeon/act' && request.method === 'POST') {
+        return await handleDungeonAct(request, env);
+      }
+      if (pathname === '/api/dungeon/state' && request.method === 'GET') {
+        return await handleDungeonState(request, env);
+      }
+      if (pathname === '/api/dungeon/abandon' && request.method === 'POST') {
+        return await handleDungeonAbandon(request, env);
       }
       if (pathname.startsWith('/api/admin')) {
         return await handleAdmin(request, env);

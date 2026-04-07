@@ -7,13 +7,16 @@ import { feed } from './commands/feed.js';
 import { leaderboard } from './commands/leaderboard.js';
 import { rest } from './commands/rest.js';
 import { wake } from './commands/wake.js';
+import { equip } from './commands/equip.js';
+import { achievements } from './commands/achievements.js';
+import { explore } from './commands/explore.js';
 
 const program = new Command();
 
 program
   .name('clawfight')
   .description('🦞 ClawFight — 龙虾电子宠物对战')
-  .version('1.3.0');
+  .version('1.5.0');
 
 program
   .command('hatch')
@@ -73,6 +76,32 @@ program
   .description('从休眠中唤醒（附带恢复加成）')
   .action(async () => {
     await wake();
+  });
+
+program
+  .command('equip')
+  .description('装备管理（查看/穿戴/卸下/丢弃）')
+  .argument('[action]', '编号(装备) / drop / unequip')
+  .argument('[arg]', '编号或槽位(claw/shell/charm)')
+  .action(async (action?: string, arg?: string) => {
+    await equip(action, arg);
+  });
+
+program
+  .command('achievements')
+  .alias('ach')
+  .description('查看成就')
+  .action(async () => {
+    await achievements();
+  });
+
+program
+  .command('explore')
+  .alias('dg')
+  .description('地下城探索（进入/选择/放弃/查看地图）')
+  .argument('[action]', '1|2(选择) / abandon(放弃) / maps(查看地图) / 地图编号(进入)')
+  .action(async (action?: string) => {
+    await explore(action);
   });
 
 program.parse();

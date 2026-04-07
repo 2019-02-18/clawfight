@@ -1,10 +1,14 @@
-import type { PatrolResponse, LeaderboardResponse, Lobster } from './types.js';
+import type {
+  PatrolResponse, LeaderboardResponse, Lobster,
+  DungeonEnterResponse, DungeonActResponse, DungeonStateResponse, DungeonAbandonResponse,
+} from './types.js';
 import { createHash } from 'node:crypto';
+import { getEffectiveStats } from './equipment.js';
 
 const API_BASE = 'https://api.clawfight.online';
 
 function statsHash(lobster: Lobster): string {
-  const raw = JSON.stringify(lobster.stats);
+  const raw = JSON.stringify(getEffectiveStats(lobster));
   return createHash('sha256').update(raw).digest('hex');
 }
 
@@ -52,7 +56,7 @@ export async function apiPatrol(lobster: Lobster): Promise<PatrolResponse | null
         lobster_id: lobster.id,
         level: lobster.level,
         stats_hash: statsHash(lobster),
-        stats: lobster.stats,
+        stats: getEffectiveStats(lobster),
         environment: lobster.environment,
         name: lobster.name,
         color: lobster.rarity,
@@ -115,6 +119,78 @@ export async function apiLeaderboard(limit = 20): Promise<LeaderboardResponse | 
     });
     if (!res.ok) return null;
     return (await res.json()) as LeaderboardResponse;
+  } catch {
+    return null;
+  }
+}
+
+export async function apiDungeonEnter(lobster: Lobster, theme?: string): Promise<DungeonEnterResponse | null> {
+  try {
+    const pfetch = await getProxiedFetch();
+    const res = await pfetch(`${API_BASE}/api/dungeon/enter`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({
+        lobster_id: lobster.id,
+        level: lobster.level,
+        stats: getEffectiveStats(lobster),
+        soul: lobster.soul,
+        depth: lobster.depth ?? 0,
+        environment: lobster.environment,
+        theme,
+      }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) {
+      const err = (await res.json()) as Record<string, unknown>;
+      return { error: err.error } as any;
+    }
+    return (await res.json()) as DungeonEnterResponse;
+  } catch {
+    return null;
+  }
+}
+
+export async function apiDungeonAct(dungeonId: string, lobsterId: string, choice: 1 | 2): Promise<DungeonActResponse | null> {
+  try {
+    const pfetch = await getProxiedFetch();
+    const res = await pfetch(`${API_BASE}/api/dungeon/act`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ dungeon_id: dungeonId, lobster_id: lobsterId, choice }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as DungeonActResponse;
+  } catch {
+    return null;
+  }
+}
+
+export async function apiDungeonState(lobsterId: string): Promise<DungeonStateResponse | null> {
+  try {
+    const pfetch = await getProxiedFetch();
+    const res = await pfetch(`${API_BASE}/api/dungeon/state?lobster_id=${lobsterId}`, {
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as DungeonStateResponse;
+  } catch {
+    return null;
+  }
+}
+
+export async function apiDungeonAbandon(lobsterId: string): Promise<DungeonAbandonResponse | null> {
+  try {
+    const pfetch = await getProxiedFetch();
+    const res = await pfetch(`${API_BASE}/api/dungeon/abandon`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ lobster_id: lobsterId }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as DungeonAbandonResponse;
   } catch {
     return null;
   }

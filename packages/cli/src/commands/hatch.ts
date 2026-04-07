@@ -72,6 +72,14 @@ export async function hatch(name?: string): Promise<void> {
     last_battle: '',
     today_exp: 0,
     daily_exp_cap: 100,
+    equipped: {},
+    inventory: [],
+    depth: 0,
+    achievements: [],
+    dungeon_maps: [],
+    dungeons_completed: 0,
+    boss_kills: 0,
+    dungeon_epics_found: 0,
   };
 
   await writeLobster(lobster);

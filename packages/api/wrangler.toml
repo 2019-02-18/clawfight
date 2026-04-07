@@ -29,6 +29,11 @@ binding = "LEADERBOARD"
 id = "2d04332e91f549089925083d7bc4d6c8"
 preview_id = "96298d9b64a040c6899375383655c5c4"
 
+[[kv_namespaces]]
+binding = "DUNGEONS"
+id = "1301910b94f748dfa069b4e17f8c5372"
+preview_id = "1a4ca5e95e4041fbb9b7f9ed70c11f30"
+
 [dev]
 port = 8787
 local_protocol = "http"

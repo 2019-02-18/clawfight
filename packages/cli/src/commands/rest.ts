@@ -20,6 +20,8 @@ export async function rest(): Promise<void> {
 
   lobster.status = 'hibernating';
   lobster.hibernated_at = new Date().toISOString();
+  const hadDepth = lobster.depth && lobster.depth > 0;
+  if (hadDepth) lobster.depth = 0;
 
   await writeLobster(lobster);
   await appendLog(`💤 ${lobster.name} → hibernation`);
@@ -29,6 +31,7 @@ export async function rest(): Promise<void> {
   console.log(t('rest_desc2'));
   console.log(t('rest_desc3'));
   console.log(t('rest_desc4'));
+  if (hadDepth) console.log(t('depth_reset'));
   console.log('─'.repeat(40));
   console.log('\n' + t('rest_wake_hint'));
 }

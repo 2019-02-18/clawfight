@@ -45,11 +45,22 @@ npx @2025-6-19/clawfight battle <code>
 # View leaderboard / 排行榜
 npx @2025-6-19/clawfight leaderboard
 
-# Hibernate / 休眠
+# Manage equipment / 装备管理
+npx @2025-6-19/clawfight equip
+
+# View achievements / 查看成就
+npx @2025-6-19/clawfight achievements
+
+# Hibernate (resets depth) / 休眠（重置深度）
 npx @2025-6-19/clawfight rest
 
 # Wake up / 唤醒
 npx @2025-6-19/clawfight wake
+
+# Dungeon exploration / 地下城探索
+npx @2025-6-19/clawfight explore        # Enter or resume
+npx @2025-6-19/clawfight explore 1      # Choose option 1
+npx @2025-6-19/clawfight explore maps   # View dungeon maps
 ```
 
 ## Architecture / 架构
@@ -125,11 +136,47 @@ Each lobster has 6 stats (5-15 base): HP, Attack, Defense, Speed, Intimidation, 
 
 ### Soul / 灵魂
 
-4 personality axes (1-10 each):
-- **Bravery / 勇气** — brave ↔ cautious
-- **Curiosity / 好奇** — curious ↔ conservative
-- **Talkativeness / 话量** — chatty ↔ silent
-- **Temper / 脾气** — hot-tempered ↔ gentle
+4 personality axes (1-10 each), directly affect gameplay:
+
+| Trait | High (≥7) | Low (≤3) |
+|---|---|---|
+| **Bravery / 勇气** | +10% drop rate, depth loss -1 | -10% drop rate, durability +2 |
+| **Curiosity / 好奇** | Equipment level +1, extra events | Event effects +50% |
+| **Talkativeness / 话量** | — | Stealth: rarity boost |
+| **Temper / 脾气** | Win EXP ×1.2, depth loss -3 | Balanced, stable |
+
+The lobster **autonomously** manages equipment based on personality:
+- Auto-equips better gear found during patrol (compares power score)
+- Auto-discards weakest item when inventory is full
+- Decision reasons reflect personality traits (e.g. "勇猛本能", "谨慎直觉")
+
+### Equipment / 装备 (v1.4)
+
+3 slots: ⚔️ Claw (ATK/SPD), 🛡️ Shell (HP/DEF), 💎 Charm (LCK/INT)
+
+**Quality Level** `+1` ~ `+5`: determined by depth and curiosity, multiplies stat bonuses.
+Display format: `[稀有+3] 珊瑚刺钳 ATK+6 SPD+3 (12/12)`
+
+| Rarity | Drop Weight | Bonus Mult | Durability | Level formula |
+|---|---|---|---|---|
+| Common / 普通 | 60% | 1x | 8 | `floor(depth/3)+1` |
+| Rare / 稀有 | 25% | 2x | 12 | +1 if curiosity ≥7 |
+| Epic / 史诗 | 12% | 3x | 18 | cap: 5 |
+| Legendary / 传说 | 3% | 5x | 30 | |
+
+- Stat bonus = `ceil(random * 2 * rarityMul * (1 + (level-1) * 0.3))`
+- Equipment degrades on battle; breaks at 0 durability
+- Inventory limit: 6 items
+- Power score: `sum(bonuses) × rarityPower × level × (durability%)`
+
+### Depth System / 深度系统 (v1.4)
+
+Roguelike risk/reward core mechanic:
+- Each patrol: depth +1
+- Higher depth: better drop chance (25% + 5%/depth, cap 80%) and rarity/level boost
+- Battle loss: depth penalty varies by temper (-1 brave / -2 normal / -3 hot-tempered)
+- Rest/hibernate: depth resets to 0
+- Push deeper for better loot, or rest to play safe
 
 ### Battle / 战斗
 
@@ -160,11 +207,53 @@ Each lobster has 6 stats (5-15 base): HP, Attack, Defense, Speed, Intimidation, 
 
 ## Roadmap / 未来规划
 
-- **Equipment System** — Find gear during patrol (claw gauntlets, shell armor) to boost combat stats / 装备系统：巡逻捡装备提升战力
-- **Season System** — Weekly/monthly leaderboard resets for competitive seasons / 赛季机制：定期重置排行榜
-- **Team Battles** — Multi-lobster squad fights / 团队战：多只龙虾组队作战
-- **Environment Effects** — Different environments grant battle bonuses / 环境特效：不同环境对战斗有额外加成
-- **Achievement System** — Unlock achievements for special rewards / 成就系统：解锁成就获得奖励
+### v1.4 — Roguelike Patrol / 肉鸽巡逻 ✅
+
+> Patrol deeper, risk more, earn better loot.
+> 越深入越危险，奖励也越丰厚。
+
+- [x] **Equipment System / 装备系统** — 3 slots (claw/shell/charm), random drops during patrol with 4 rarity tiers, durability wear / 三个装备槽位，巡逻随机掉落，四种稀有度，耐久磨损
+- [x] **Depth System / 深度系统** — Consecutive patrols increase depth → better loot & rarity, but loss costs depth. Rest resets to 0. Classic roguelike risk/reward loop / 连续巡逻增加深度→更好掉落，失败扣深度，休眠归零
+- [x] **Achievement System / 成就系统** — 12 milestone achievements auto-checked on patrol (first win, streaks, depth, full equip) / 12个里程碑成就，巡逻时自动检测解锁
+
+### v1.5 — Deep Sea Dungeons / 深海地下城 ✅
+
+> Explore procedural dungeons with meaningful choices.
+> 探索程序化地下城，每个选择都有意义。
+
+- [x] **Dungeon Map Drops / 地图掉落** — Patrol drops dungeon maps with theme, rooms, difficulty / 巡逻掉落带主题、房间数、难度的地图
+- [x] **Server-Authoritative Dungeons / 服务端权威地下城** — Seeded RNG, 6 room types, procedural creatures / 种子RNG，6种房间，程序化怪物
+- [x] **Binary Choices / 二元选择** — Each room has 2 stat-checked choices with risk levels / 每房间2个属性检定选择
+- [x] **Soul-Influenced Exploration / 灵魂影响探索** — Personality traits grant bonuses (bravery→ATK, curiosity→discovery) / 性格特质影响探索
+- [x] **8 Dungeon Themes / 8种主题** — Coral Maze, Deep Rift, Thermal Vent, Ice Cavern, Shipwreck, Abyss Trench, Tide Pool, Void Rift
+- [x] **Dungeon Achievements / 地下城成就** — 5 new achievements for dungeon mastery / 5个新地下城成就
+
+### v1.6 — Environment & Biome / 环境与生态 (Planned)
+
+> Each environment tells a different story.
+> 不同环境，不同冒险。
+
+- [ ] **Biome-Specific Loot / 生态专属掉落** — Unique equipment only found in certain environments
+- [ ] **Environment Hazards / 环境危险** — Deep-sea pressure, hot-spring burns, polar freeze — temporary debuffs during patrol
+- [ ] **Migration / 迁徙** — Move to new environments to discover exclusive gear and events
+
+### v1.7 — Season & Competition / 赛季竞技 (Planned)
+
+> Fight for glory, season by season.
+> 每个赛季，重新证明自己。
+
+- [ ] **Seasonal Leaderboard / 赛季排行榜** — Monthly resets with end-of-season rewards
+- [ ] **Season Pass / 赛季通行证** — Cumulative patrol & battle rewards track
+- [ ] **Title System / 称号系统** — Earn titles from achievements and season rankings
+
+### v2.0 — Multiplayer Expansion / 多人扩展 (Future)
+
+> The ocean is vast. You are not alone.
+> 海洋广阔，你并不孤单。
+
+- [ ] **Team Battles / 团队战** — Multi-lobster squad fights with formation strategy
+- [ ] **Guilds / 公会** — Join forces, share resources, compete as a team
+- [ ] **Trading / 交易** — Exchange equipment between players
 
 ## License
 

@@ -7,6 +7,20 @@ export interface LobsterStats {
   luck: number;
 }
 
+export type EquipSlot = 'claw' | 'shell' | 'charm';
+export type EquipRarity = 'common' | 'rare' | 'epic' | 'legendary';
+
+export interface Equipment {
+  id: string;
+  name: string;
+  slot: EquipSlot;
+  rarity: EquipRarity;
+  level: number;
+  bonuses: Partial<Record<keyof LobsterStats, number>>;
+  durability: number;
+  max_durability: number;
+}
+
 export interface LobsterSoul {
   bravery: number;
   curiosity: number;
@@ -41,6 +55,95 @@ export interface Lobster {
   today_exp: number;
   daily_exp_cap: number;
   hibernated_at?: string;
+  equipped?: Partial<Record<EquipSlot, Equipment>>;
+  inventory?: Equipment[];
+  depth?: number;
+  achievements?: string[];
+  dungeon_maps?: DungeonMap[];
+  active_dungeon?: string;
+  dungeons_completed?: number;
+  boss_kills?: number;
+  dungeon_epics_found?: number;
+}
+
+export interface DungeonMap {
+  theme: string;
+  rooms: number;
+  difficulty: 'easy' | 'normal' | 'hard' | 'nightmare';
+}
+
+export interface DungeonChoice {
+  id: 1 | 2;
+  key: string;
+  stat: string;
+  risk: 'low' | 'mid' | 'high';
+  soul_hint?: string;
+}
+
+export interface DungeonRoomView {
+  index: number;
+  total: number;
+  type: string;
+  theme_key: string;
+  choices: [DungeonChoice, DungeonChoice];
+  hp: { current: number; max: number };
+}
+
+export interface DungeonLoot {
+  name: string;
+  slot: EquipSlot;
+  rarity: EquipRarity;
+  level: number;
+  bonuses: Record<string, number>;
+  durability: number;
+  max_durability: number;
+}
+
+export interface DungeonEnterResponse {
+  dungeon_id: string;
+  theme: string;
+  total_rooms: number;
+  hp: { current: number; max: number };
+  room: DungeonRoomView;
+}
+
+export interface DungeonActResponse {
+  outcome: {
+    success: boolean;
+    key: string;
+    damage_taken: number;
+    hp_healed: number;
+    exp_gained: number;
+    loot?: DungeonLoot;
+    soul_activated?: string;
+  };
+  hp: { current: number; max: number };
+  status: 'active' | 'completed' | 'failed' | 'abandoned';
+  next_room: DungeonRoomView | null;
+  rewards?: {
+    total_exp: number;
+    loot: DungeonLoot[];
+    completed: boolean;
+  };
+}
+
+export interface DungeonStateResponse {
+  active: boolean;
+  dungeon_id?: string;
+  theme?: string;
+  total_rooms?: number;
+  current_room?: number;
+  hp?: { current: number; max: number };
+  status?: string;
+  room?: DungeonRoomView;
+  loot_so_far?: number;
+  exp_so_far?: number;
+}
+
+export interface DungeonAbandonResponse {
+  status: 'abandoned';
+  partial_exp: number;
+  partial_loot: DungeonLoot[];
 }
 
 export interface RandomEvent {
@@ -127,6 +230,24 @@ export interface LeaderboardResponse {
   rarity_distribution: Record<string, number>;
   updated_at: string;
 }
+
+export const EQUIP_RARITY_WEIGHTS: Record<EquipRarity, number> = {
+  common: 60, rare: 25, epic: 12, legendary: 3,
+};
+
+export const EQUIP_RARITY_LABELS: Record<EquipRarity, string> = {
+  common: '普通', rare: '稀有', epic: '史诗', legendary: '传说',
+};
+
+export const SLOT_LABELS: Record<EquipSlot, string> = {
+  claw: '钳', shell: '壳', charm: '饰',
+};
+
+export const SLOT_ICONS: Record<EquipSlot, string> = {
+  claw: '⚔️', shell: '🛡️', charm: '💎',
+};
+
+export const MAX_INVENTORY = 6;
 
 export const RARITY_WEIGHTS: Record<Rarity, number> = {
   common: 70,
