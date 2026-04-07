@@ -11,12 +11,28 @@ import { equip } from './commands/equip.js';
 import { achievements } from './commands/achievements.js';
 import { explore } from './commands/explore.js';
 
+const CURRENT_VERSION = '1.5.1';
+
+async function checkUpdate(): Promise<void> {
+  try {
+    const res = await fetch('https://registry.npmjs.org/@2025-6-19/clawfight/latest', {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return;
+    const data = await res.json() as { version?: string };
+    if (data.version && data.version !== CURRENT_VERSION) {
+      console.log(`\n🆕 新版本可用: v${data.version} (当前 v${CURRENT_VERSION})`);
+      console.log(`   运行: npx @2025-6-19/clawfight@latest <command>\n`);
+    }
+  } catch { /* silent */ }
+}
+
 const program = new Command();
 
 program
   .name('clawfight')
   .description('🦞 ClawFight — 龙虾电子宠物对战')
-  .version('1.5.0');
+  .version(CURRENT_VERSION);
 
 program
   .command('hatch')
@@ -103,5 +119,9 @@ program
   .action(async (action?: string) => {
     await explore(action);
   });
+
+program.hook('postAction', async () => {
+  await checkUpdate();
+});
 
 program.parse();
